@@ -194,18 +194,20 @@ def getAgeCode(identity) {
         return null;
 
     String dob = identity.get('dateOfBirth');
-    if(!pattern.matcher(dob).matches())
+    if (!pattern.matcher(dob).matches())
         return null;
-        
+
     LocalDate date = LocalDate.parse(dob, DateTimeFormatter.ofPattern(DATE_PATTERN));
     LocalDate currentDate = LocalDate.now(ZoneId.of("UTC"));
-    
-    if(date.isAfter(currentDate)) { return 'KER-MSD-151'; }
-    
+
+    if (date.isAfter(currentDate)) { return 'KER-MSD-151'; }
+
     int ageInYears = Period.between(date, currentDate).getYears();
-    
+    int ageInMonths = (ageInYears * 12) + Period.between(date, currentDate).getMonths();
+    double exactAge = ageInMonths / 12.0;
+
     String ageGroup = null;
-   	for (String groupName : ageGroups.keySet()) {
+    for (String groupName : ageGroups.keySet()) {
         String rangeStr = (String)ageGroups.get(groupName);
 
         if (rangeStr != null && rangeStr.contains('-')) {
@@ -219,7 +221,7 @@ def getAgeCode(identity) {
         }
     }
 
-   return ageGroup == null ? null : ageGroup;
+    return ageGroup == null ? null : ageGroup;
 }
 
 def getAgeCop(identity) {
