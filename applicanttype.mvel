@@ -383,7 +383,7 @@ def getApplicantType() {
   {
     return "035";
   }	
-  else if(userCase==Update  && fatherNIN==null && motherNIN==null && ageCode == CHILD || ageCode == INFANT) )
+  else if(userCase==Update  && fatherNIN==null && motherNIN==null && (ageCode == CHILD || ageCode == INFANT) )
   {
    return "003";
   }
