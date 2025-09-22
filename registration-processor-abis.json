@@ -8,7 +8,7 @@
         "outboundQueueName": "abis-to-mosip",
         "pingInboundQueueName": "",
         "pingOutboundQueueName": "",
-        "userName": "artemis",
+        "userName": "${activemq.username}",
         "password": "${activemq.password}",
         "typeOfQueue": "ACTIVEMQ",
         "inboundMessageTTL": 2700
