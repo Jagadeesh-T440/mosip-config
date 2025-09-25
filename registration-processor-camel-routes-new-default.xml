@@ -293,11 +293,11 @@
             <to uri="workflow-cmd://complete-as-rejected" />
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
-		   <when>
+		 <when>
             <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'mvs-bus-in')]</jsonpath>
             <to uri="eventbus://mvs-bus-in" />
          </when>
-           <when>
+         <when>
    			 <jsonpath suppressExceptions="true">$.[?(@['tags']['ID_OBJECT-applicantCitizenshipType'] == 'By Birth /Descent' &amp;&amp; @['tags']['AGE_GROUP'] == 'CHILD')]
    			 </jsonpath><to uri="eventbus://citizenship-verification-bus-in" />
 		 </when>
@@ -451,7 +451,7 @@
             <to uri="workflow-cmd://complete-as-rejected" />
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
-		   <when>
+		 <when>
             <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'citizenship-verification-bus-in' &amp;&amp; @['tags']['ID_OBJECT-userServiceType'] == 'By Birth /Descent')]</jsonpath>
             <to uri="eventbus://citizenship-verification-bus-in" />
          </when>
