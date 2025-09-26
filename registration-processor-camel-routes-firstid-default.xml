@@ -266,6 +266,10 @@
       <from uri="eventbus://biometric-authentication-firstid-bus-out" />
       <log message="biometric-authentication-stage-->demo-dedupe firstid route ${bodyAs(String)}" />
       <choice>
+		  <when>
+            <jsonpath>$.[?(@['messageBusAddress']['address'] == 'manual-adjudication-bus-in')]</jsonpath>
+            <to uri="eventbus://manual-adjudication-bus-in" />
+         </when>
          <when>
             <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == true)]</jsonpath>
             <to uri="workflow-cmd://complete-as-failed" />
@@ -352,9 +356,9 @@
          </otherwise>
       </choice>
    </route>
-   <route id="bio-dedupe-->uin-generation firstid route">
+   <route id="bio-dedupe-->citizenship-verification firstid route">
       <from uri="eventbus://bio-dedupe-firstid-bus-out" />
-      <log message="bio-dedupe-->uin-generation firstid route ${bodyAs(String)}" />
+      <log message="bio-dedupe-->citizenship-verification firstid route ${bodyAs(String)}" />
       <choice>
          <when>
             <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == true)]</jsonpath>
@@ -379,11 +383,15 @@
             <to uri="eventbus://abis-handler-bus-in" />
          </when>
 		  <when>
+            <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'manual-adjudication-bus-in')]</jsonpath>
+            <to uri="eventbus://manual-adjudication-bus-in" />
+         </when>
+		  <when>
             <jsonpath suppressExceptions="true">$.[?( @['tags']['ID_OBJECT-inDepthCitizenshipVerification'] == 'Y'  )]</jsonpath>
             <to uri="eventbus://mvs-bus-in" />
          </when>
          <otherwise>
-            <to uri="eventbus://uin-generator-bus-in" />
+            <to uri="eventbus://mvs-bus-in" />
          </otherwise>
       </choice>
    </route>
@@ -433,9 +441,9 @@
          </otherwise>
       </choice>
    </route>
-   <route id="manual-adjudication-->uin-generation firstid route">
+   <route id="manual-adjudication-->citizenship-verification firstid route">
       <from uri="eventbus://manual-adjudication-firstid-bus-out" />
-      <log message="manual-adjudication-->uin-generation firstid route ${bodyAs(String)}" />
+      <log message="manual-adjudication-->citizenship-verification firstid route ${bodyAs(String)}" />
       <choice>
          <when>
             <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == true)]</jsonpath>
@@ -451,8 +459,12 @@
             <to uri="workflow-cmd://complete-as-rejected" />
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
+		  <when>
+            <jsonpath suppressExceptions="true">$.[?( @['tags']['ID_OBJECT-inDepthCitizenshipVerification'] == 'Y'  )]</jsonpath>
+            <to uri="eventbus://mvs-bus-in" />
+         </when>
          <otherwise>
-            <to uri="eventbus://uin-generator-bus-in" />
+            <to uri="eventbus://mvs-bus-in" />
          </otherwise>
       </choice>
    </route>
