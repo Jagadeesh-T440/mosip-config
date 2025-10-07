@@ -385,10 +385,10 @@
             <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'manual-adjudication-bus-in')]</jsonpath>
             <to uri="eventbus://manual-adjudication-bus-in" />
          </when>
-         <when>
+        <!-- <when>
              <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'ADULT'  || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
            <to uri="eventbus://legacy-data-bus-in" />
-          </when>
+          </when>-->
 	      <when>
             <jsonpath suppressExceptions="true">$.[?( @['tags']['ID_OBJECT-inDepthCitizenshipVerification'] == 'Y'  )]</jsonpath>
             <to uri="eventbus://mvs-bus-in" />
