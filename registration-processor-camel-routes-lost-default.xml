@@ -410,8 +410,8 @@
       <log message="manual-adjudication-lost-->uin-generation lost route ${bodyAs(String)}" />
       <choice>
 		 <when>
-            <jsonpath>$.[?(@['messageBusAddress']['address'] == 'demo-dedupe-bus-in')]</jsonpath>
-            <to uri="eventbus://demo-dedupe-bus-in" />
+            <jsonpath>$.[?(@['messageBusAddress']['address'] == 'bio-dedupe-bus-in')]</jsonpath>
+            <to uri="eventbus://bio-dedupe-bus-in" />
          </when>
          <when>
             <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == true)]</jsonpath>
@@ -426,6 +426,10 @@
             <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == false)]</jsonpath>
             <to uri="workflow-cmd://complete-as-rejected" />
             <to uri="workflow-cmd://anonymous-profile" />
+         </when>
+         <when>
+            <jsonpath suppressExceptions="true">$.[?( @['tags']['ID_OBJECT-inDepthCitizenshipVerification'] == 'Y' || @['tags']['ID_OBJECT-userServiceTypeReplacement'] == 'Lost' )]</jsonpath>
+            <to uri="eventbus://mvs-bus-in" />
          </when>
          <otherwise>
             <to uri="eventbus://uin-generator-bus-in" />
