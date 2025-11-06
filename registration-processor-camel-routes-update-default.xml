@@ -193,6 +193,10 @@
             <jsonpath suppressExceptions="true">$.[?(@['tags']['META_INFO-OPERATIONS_DATA-supervisorId'] != '' &amp;&amp; @['tags']['META_INFO-OPERATIONS_DATA-supervisorId'] != '--TAG_VALUE_NOT_AVAILABLE--')]</jsonpath>
             <to uri="eventbus://supervisor-validator-bus-in" />
          </when>
+		 <when>
+	     <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'CHILD')]</jsonpath>
+          <to uri="eventbus://biometric-authentication-bus-in" />
+          </when>
          <otherwise>
             <to uri="eventbus://quality-classifier-bus-in" />
          </otherwise>
@@ -216,6 +220,10 @@
             <to uri="workflow-cmd://complete-as-failed" />
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
+		 <when>
+	     <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'CHILD')]</jsonpath>
+          <to uri="eventbus://biometric-authentication-bus-in" />
+          </when>
          <otherwise>
             <to uri="eventbus://quality-classifier-bus-in" />
          </otherwise>
@@ -339,7 +347,7 @@
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
 		  <when>
-        <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
+        <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'CHILD' || @['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
          <to uri="eventbus://introducer-validator-bus-in" />
          </when>
          <otherwise>
