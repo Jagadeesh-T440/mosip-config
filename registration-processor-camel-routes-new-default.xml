@@ -120,11 +120,38 @@
             <to uri="workflow-cmd://complete-as-failed" />
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
+		  <when>
+            <jsonpath suppressExceptions="true">$.[?(@['tags']['PRN_AVAILABILITY'] == 'true')]</jsonpath>
+              <to uri="eventbus://payment-validator-bus-in" />
+         </when>
          <otherwise>
             <to uri="eventbus://c-m-d-validator-bus-in" />
          </otherwise>
       </choice>
    </route>
+	<route id="payment-validator-->cmd-validator new route">
+ 		<from uri="eventbus://payment-validator-new-bus-out" />
+ 		<log message="payment-validator-->cmd-validator new route ${bodyAs(String)}" />
+ 		<choice>
+ 			 <when>
+            <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == true)]</jsonpath>
+            <to uri="workflow-cmd://complete-as-failed" />
+            <to uri="workflow-cmd://anonymous-profile" />
+         </when>
+         <when>
+            <jsonpath>$.[?(@['isValid'] == true &amp;&amp; @['internalError'] == true)]</jsonpath>
+            <to uri="workflow-cmd://mark-as-reprocess" />
+         </when>
+         <when>
+            <jsonpath>$.[?(@['isValid'] == false &amp;&amp; @['internalError'] == false)]</jsonpath>
+            <to uri="workflow-cmd://complete-as-failed" />
+            <to uri="workflow-cmd://anonymous-profile" />
+           </when>
+ 			 <otherwise>
+ 				<to uri="eventbus://c-m-d-validator-bus-in" />
+ 			 </otherwise>
+ 		</choice>
+     </route>
    <route id="cmd-validator-->operator-validator new route">
       <from uri="eventbus://c-m-d-validator-new-bus-out" />
       <log message="cmd-validator-->operator-validator/supervisor-validator new route ${bodyAs(String)}" />
@@ -180,7 +207,7 @@
             <to uri="eventbus://supervisor-validator-bus-in" />
          </when>
          <when>
-            <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'CHILD' || @['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
+            <jsonpath suppressExceptions="true">$.[?((@['tags']['AGE_GROUP'] == 'CHILD' || @['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')  &amp;&amp; @['tags']['ID_OBJECT-applicantCitizenshipType'] != 'Alien New Registration')]</jsonpath>
             <to uri="eventbus://introducer-validator-bus-in" />
          </when>
          <otherwise>
@@ -207,7 +234,7 @@
             <to uri="workflow-cmd://anonymous-profile" />
          </when>
          <when>
-            <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'CHILD' || @['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
+            <jsonpath suppressExceptions="true">$.[?((@['tags']['AGE_GROUP'] == 'CHILD' || @['tags']['AGE_GROUP'] == 'INFANT' || @['tags']['AGE_GROUP'] == 'MINOR')  &amp;&amp; @['tags']['ID_OBJECT-applicantCitizenshipType'] != 'Alien New Registration')]</jsonpath>
             <to uri="eventbus://introducer-validator-bus-in" />
          </when>
          <otherwise>
@@ -393,9 +420,13 @@
             <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'abis-handler-bus-in')]</jsonpath>
             <to uri="eventbus://abis-handler-bus-in" />
          </when>
-	<when>
+	     <when>
             <jsonpath suppressExceptions="true">$.[?(@['messageBusAddress']['address'] == 'manual-adjudication-bus-in')]</jsonpath>
             <to uri="eventbus://manual-adjudication-bus-in" />
+         </when>
+		    <when>
+            <jsonpath suppressExceptions="true">$.[?(@['tags']['ID_OBJECT-applicantCitizenshipType'] == 'Alien New Registration')]</jsonpath>
+            <to uri="eventbus://mvs-bus-in" />
          </when>
          <when>
              <jsonpath suppressExceptions="true">$.[?(@['tags']['AGE_GROUP'] == 'ADULT'  || @['tags']['AGE_GROUP'] == 'MINOR')]</jsonpath>
